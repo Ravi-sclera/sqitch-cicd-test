@@ -1,0 +1,76 @@
+name: Main CI/CD Workflow
+ 
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: true
+        default: 'cicd-sqitch'  # Default branch if not provided
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}  # This uses the branch input from the manual trigger
+          fetch-depth: 0 # Ensure full history
+ 
+      - name: List Repository Files
+        run: |
+          echo "Repository structure:"
+          find . -type f
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+ 
+      - name: Build with Maven
+        run: mvn clean package # If pom.xml is in root
+        # run: mvn -f backend/pom.xml clean package # Uncomment if pom.xml is inside a subfolder
+ 
+      - name: Transfer JAR to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 156.67.105.82
+          username: root
+          password: 1a2s3d4f5g@1993
+          source: "target/*.jar" # Update path if needed
+          target: "/root/deployment"
+          
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Sqitch
+        run: |
+          sudo apt update
+          sudo apt install sqitch libdbd-mysql-perl
+
+      - name: Deploy Database Changes
+        run: |
+          sqitch deploy db:mysql://root:1a2s3d4f5g@1993@localhost/cicdpipeline
+      - name: Restart Application on Server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 156.67.105.82
+          username: root
+          password: 1a2s3d4f5g@1993
+          debug: true
+          script: |
+            # Stop the service if it's running
+            systemctl stop helloworldcicdtest.service || echo "Service not running or failed to stop"
+ 
+            # Start the service with the new JAR file
+            systemctl start helloworldcicdtest.service
+ 
+            # Optionally check the status to ensure it started correctly
+            systemctl status helloworldcicdtest.service || echo "Failed to start service"
+ 
+            # If you want to make sure it's running in the background
+            echo "Application restarted successfully"
+ 
