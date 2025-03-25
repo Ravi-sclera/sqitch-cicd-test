@@ -42,9 +42,6 @@ jobs:
           password: 1a2s3d4f5g@1993
           source: "target/*.jar" # Update path if needed
           target: "/root/deployment"
-          
-      - name: Checkout Repository
-        uses: actions/checkout@v3
 
       - name: Install Sqitch
         run: |
