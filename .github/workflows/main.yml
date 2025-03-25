@@ -54,6 +54,10 @@ jobs:
       - name: Deploy Database Changes
         run: |
           sqitch deploy db:mysql://root:${{ secrets.DB_PASSWORD }}@127.0.0.1/cicdpipeline
+          with:
+          host: 156.67.105.82
+          username: root
+          password: 1a2s3d4f5g@1993
       - name: Restart Application on Server
         uses: appleboy/ssh-action@v0.1.8
         with:
