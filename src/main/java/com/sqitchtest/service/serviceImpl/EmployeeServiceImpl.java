@@ -39,9 +39,4 @@ public class EmployeeServiceImpl implements EmployeeService {
                     return employeeRepository.save(existingEmployee);
                 }).orElseThrow(() -> new RuntimeException("Employee not found"));
     }
-
-    @Override
-    public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
-    }
 }
