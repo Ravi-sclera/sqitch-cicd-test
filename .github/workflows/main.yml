@@ -53,7 +53,7 @@ jobs:
 
       - name: Deploy Database Changes
         run: |
-          sqitch deploy db:mysql://root:1a2s3d4f5g@1993@localhost/cicdpipeline
+          sqitch deploy db:mysql://root:password%40123@localhost/cicdpipeline
       - name: Restart Application on Server
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -63,13 +63,13 @@ jobs:
           debug: true
           script: |
             # Stop the service if it's running
-            systemctl stop helloworldcicdtest.service || echo "Service not running or failed to stop"
+            systemctl stop sqitch-spring-service.service || echo "Service not running or failed to stop"
  
             # Start the service with the new JAR file
-            systemctl start helloworldcicdtest.service
+            systemctl start sqitch-spring-service.service
  
             # Optionally check the status to ensure it started correctly
-            systemctl status helloworldcicdtest.service || echo "Failed to start service"
+            systemctl status sqitch-spring-service.service || echo "Failed to start service"
  
             # If you want to make sure it's running in the background
             echo "Application restarted successfully"
