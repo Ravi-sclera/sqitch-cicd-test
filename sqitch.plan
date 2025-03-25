@@ -2,3 +2,4 @@
 %project=my_springboot_project
 
 create_lodu 2025-03-25T08:36:47Z Ravi,,, <ravi@AccessSystems> # Creating lodu table
+add_age_column 2025-03-25T11:42:29Z Ravi,,, <ravi@AccessSystems> # Adding age column to users table
