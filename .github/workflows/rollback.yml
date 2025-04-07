@@ -35,6 +35,7 @@ jobs:
             ./verify/create_lodu.sql
           target: /root/deployment/sqitch
           strip_components: 0
+          debug: true
 
       - name: Rollback Database and Restart Application
         uses: appleboy/ssh-action@v0.1.8
