@@ -44,11 +44,11 @@ jobs:
 
             echo "Fetching previous Sqitch migration tag..."
             # Extract Sqitch files to a temporary directory
-            jar xf root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar BOOT-INF/classes/db/migrations/
+            jar xf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar BOOT-INF/classes/db/migrations/
 
             # Move files to a working directory
-            cp -r BOOT-INF/classes/db/migrations/* root/deployment/sqitch
-            cd root/deployment/sqitch
+            cp -r BOOT-INF/classes/db/migrations/* /root/deployment/sqitch
+            cd /root/deployment/sqitch
             PREV_TAG=$(sqitch log --reverse -n 2 db:mysql://admin:password%40123@localhost/cicdpipeline | awk 'NR==4 {print $1}')
 
             if [ -n "$PREV_TAG" ]; then
