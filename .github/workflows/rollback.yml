@@ -30,8 +30,8 @@ jobs:
             systemctl stop sqitch-spring-service.service || echo "Service not running" 
  
             echo "Rolling back to previous JAR..." 
-            if [ -f "/root/deployment/backup/previous.jar" ]; then 
-              cp /root/deployment/backup/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar 
+            if [ -f "/root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar" ]; then 
+              cp /root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar 
               echo "Previous JAR restored successfully." 
             else 
               echo "No previous JAR found! Rollback skipped." 
