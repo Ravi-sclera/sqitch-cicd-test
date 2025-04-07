@@ -37,10 +37,10 @@ jobs:
           username: root
           password: 1a2s3d4f5g@1993
           source: |
-            sqitch.plan
-            deploy/*.sql
-            revert/*.sql
-            verify/*.sql
+            ./sqitch.plan
+            ./deploy/*.sql
+            ./revert/*.sql
+            ./verify/*.sql
           target: /root/deployment/sqitch
           strip_components: 0
 
