@@ -18,29 +18,6 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
-
-      - name: Check if Sqitch files exist
-        run: |
-          echo "Checking for sqitch.plan:"
-          ls -l ./sqitch.plan
-          echo "Checking for deploy/*.sql:"
-          ls -l ./deploy/*.sql
-          echo "Checking for revert/*.sql:"
-          ls -l ./revert/*.sql
-          echo "Checking for verify/*.sql:"
-          ls -l ./verify/*.sql
-
-
-      - name: List Repository Files
-        run: |
-          echo "Repository structure:"
-          find . -type f
-          echo "\nDeploy directory contents:"
-          find ./deploy -type f -name "*.sql"
-          echo "\nRevert directory contents:"
-          find ./revert -type f -name "*.sql"
-          echo "\nVerify directory contents:"
-          find ./verify -type f -name "*.sql"
           
       - name: Copy Sqitch files to server
         uses: appleboy/scp-action@v0.1.7
