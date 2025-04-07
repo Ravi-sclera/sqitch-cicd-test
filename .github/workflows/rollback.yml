@@ -43,7 +43,7 @@ jobs:
  
             if [ -n "$PREV_TAG" ]; then 
               echo "Reverting database to $PREV_TAG..." 
-              sqitch revert db:mysql://root:${{ secrets.DB_PASSWORD }}@localhost/cicdpipeline --to $PREV_TAG 
+              sqitch revert db:mysql://admin:${{ secrets.DB_PASSWORD }}@localhost/cicdpipeline --to $PREV_TAG 
               echo "Database rollback successful." 
             else 
               echo "No previous Sqitch migration found! Skipping DB rollback." 
