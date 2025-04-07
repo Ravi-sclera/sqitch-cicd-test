@@ -25,15 +25,11 @@ jobs:
           host: 156.67.105.82
           username: root
           password: 1a2s3d4f5g@1993
-          source: |
-            ./sqitch.plan
-            ./deploy/add_lodu.sql
-            ./deploy/create_lodu.sql
-            ./revert/add_lodu.sql
-            ./revert/create_lodu.sql
-            ./verify/add_lodu.sql
-            ./verify/create_lodu.sql
-          target: /root/deployment/sqitch
+          script: |
+            scp ./sqitch.plan root@156.67.105.82:/root/deployment/sqitch/
+            scp ./deploy/*.sql root@156.67.105.82:/root/deployment/sqitch/deploy/
+            scp ./revert/*.sql root@156.67.105.82:/root/deployment/sqitch/revert/
+            scp ./verify/*.sql root@156.67.105.82:/root/deployment/sqitch/verify/
           strip_components: 0
           debug: true
 
