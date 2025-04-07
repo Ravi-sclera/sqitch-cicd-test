@@ -29,6 +29,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
+      - name: List Repository Files
+        run: |
+          echo "Repository structure:"
+          find . -type f
+          echo "\nDeploy directory contents:"
+          find ./deploy -type f -name "*.sql"
+          echo "\nRevert directory contents:"
+          find ./revert -type f -name "*.sql"
+          echo "\nVerify directory contents:"
+          find ./verify -type f -name "*.sql"
           
       - name: Copy Sqitch files to server
         uses: appleboy/scp-action@v0.1.7
