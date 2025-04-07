@@ -1,0 +1,54 @@
+name: Rollback CI/CD Workflow 
+ 
+on: 
+  workflow_dispatch: 
+    inputs: 
+      branch: 
+        description: 'Branch to rollback' 
+        required: true 
+        default: 'cicd-sqitch' 
+ 
+jobs: 
+  rollback: 
+    runs-on: ubuntu-latest 
+ 
+    steps: 
+      - name: Checkout Repository 
+        uses: actions/checkout@v4 
+        with: 
+          ref: ${{ github.event.inputs.branch }} 
+          fetch-depth: 0 
+ 
+      - name: Connect to Server and Perform Rollback 
+        uses: appleboy/ssh-action@v0.1.8 
+        with: 
+          host: 156.67.105.82 
+          username: root 
+          password: 1a2s3d4f5g@1993 
+          script: | 
+            echo "Stopping current application..." 
+            systemctl stop sqitch-spring-service.service || echo "Service not running" 
+ 
+            echo "Rolling back to previous JAR..." 
+            if [ -f "/root/deployment/backup/previous.jar" ]; then 
+              cp /root/deployment/backup/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar 
+              echo "Previous JAR restored successfully." 
+            else 
+              echo "No previous JAR found! Rollback skipped." 
+              exit 1 
+            fi 
+ 
+            echo "Fetching previous Sqitch migration tag..." 
+            PREV_TAG=$(sqitch log --reverse --limit 2 | awk 'NR==4 {print $1}') 
+ 
+            if [ -n "$PREV_TAG" ]; then 
+              echo "Reverting database to $PREV_TAG..." 
+              sqitch revert db:mysql://root:${{ secrets.DB_PASSWORD }}@localhost/cicdpipeline --to $PREV_TAG 
+              echo "Database rollback successful." 
+            else 
+              echo "No previous Sqitch migration found! Skipping DB rollback." 
+            fi 
+ 
+            echo "Restarting application..." 
+            systemctl start sqitch-spring-service.service 
+            systemctl status sqitch-spring-service.service || echo "Failed to start service"
