@@ -18,35 +18,6 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
-          
-      - name: Copy Sqitch files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: 156.67.105.82
-          username: root
-          password: 1a2s3d4f5g@1993
-          source: |
-            ./sqitch.plan
-            ./deploy/add_lodu.sql
-            ./deploy/create_lodu.sql
-            ./revert/add_lodu.sql
-            ./revert/create_lodu.sql
-            ./verify/add_lodu.sql
-            ./verify/create_lodu.sql
-          target: /root/deployment/sqitch
-          strip_components: 0
-          debug: true # Ensure debug mode is enabled
-          port: 22
-          timeout: 30s
-          command_timeout: 10m
-          use_insecure_cipher: false
-          rm: false
-          overwrite: false
-          tar_dereference: false
-          tar_exec: tar
-          proxy_port: 22
-          proxy_timeout: 30s
-          proxy_use_insecure_cipher: false
 
       - name: Rollback Database and Restart Application
         uses: appleboy/ssh-action@v0.1.8
