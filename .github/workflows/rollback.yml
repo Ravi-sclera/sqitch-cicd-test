@@ -19,14 +19,19 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
           
-      - name: Checkout Sqitch Project to Remote
-        uses: appleboy/ssh-action@v0.1.8
+      - name: Copy Sqitch files to server
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: 156.67.105.82
           username: root
           password: 1a2s3d4f5g@1993
-          script: |
-            git clone git@github.com:Ravi-sclera/sqitch-cicd-test.git /root/deployment/sqitch
+          source: |
+            sqitch.plan
+            deploy/
+            revert/
+            verify/
+          target: /root/deployment/sqitch
+          strip_components: 0
 
       - name: Rollback Database and Restart Application
         uses: appleboy/ssh-action@v0.1.8
