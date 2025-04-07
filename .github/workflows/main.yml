@@ -33,14 +33,30 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests=true # If pom.xml is in root
         # run: mvn -f backend/pom.xml clean package # Uncomment if pom.xml is inside a subfolder
- 
+      - name: Backup previous JAR on server
+        uses: appleboy/ssh-action@v0.1.8
+        id: backup-jar
+        with:
+          host: 156.67.105.82
+          username: root
+          password: 1a2s3d4f5g@1993
+          script: |
+            mkdir -p /root/deployment/backups
+            if ls /root/deployment/target/*.jar &>/dev/null; then
+              cp /root/deployment/target/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar
+              echo "Previous JAR backed up successfully"
+            else
+              echo "No existing JAR found to backup"
+              exit 0  # Continue workflow even if no backup exists
+            fi
+            
       - name: Transfer JAR to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: 156.67.105.82
           username: root
           password: 1a2s3d4f5g@1993
-          source: "target/*.jar" # Update path if needed
+          source: "target/sqitch-test-0.0.1-SNAPSHOT.jar" # Update path if needed
           target: "/root/deployment"
 
       - name: Install Sqitch
@@ -71,4 +87,25 @@ jobs:
  
             # If you want to make sure it's running in the background
             echo "Application restarted successfully"
+      - name: Rollback if deployment failed
+        if: steps.restart-app.outcome == 'failure'
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 156.67.105.82
+          username: root
+          password: 1a2s3d4f5g@1993
+          script: |
+            echo "Deployment failed, initiating rollback..."
+            if [ -f /root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar ]; then
+              echo "Restoring previous version..."
+              mv /root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment/target/
+              systemctl stop sqitch-spring-service.service || echo "Service stop failed"
+              systemctl start sqitch-spring-service.service
+              sleep 5
+              systemctl status sqitch-spring-service.service
+              echo "Rollback completed successfully"
+            else
+              echo "No backup found to rollback to"
+              exit 1
+            fi
  
