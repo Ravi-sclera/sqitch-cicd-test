@@ -49,9 +49,12 @@ jobs:
           password: 1a2s3d4f5g@1993
           source: |
             ./sqitch.plan
-            ./deploy/*.sql
-            ./revert/*.sql
-            ./verify/*.sql
+            ./deploy/add_lodu.sql
+            ./deploy/create_lodu.sql
+            ./revert/add_lodu.sql
+            ./revert/create_lodu.sql
+            ./verify/add_lodu.sql
+            ./verify/create_lodu.sql
           target: /root/deployment/sqitch
           strip_components: 0
 
