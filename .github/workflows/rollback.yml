@@ -19,16 +19,17 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
 
-      - name: List Repository Files
+      - name: Check if Sqitch files exist
         run: |
-          echo "Repository structure:"
-          find . -type f
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
+          echo "Checking for sqitch.plan:"
+          ls -l ./sqitch.plan
+          echo "Checking for deploy/*.sql:"
+          ls -l ./deploy/*.sql
+          echo "Checking for revert/*.sql:"
+          ls -l ./revert/*.sql
+          echo "Checking for verify/*.sql:"
+          ls -l ./verify/*.sql
+
 
       - name: List Repository Files
         run: |
