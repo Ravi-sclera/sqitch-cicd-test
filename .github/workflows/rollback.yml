@@ -37,6 +37,17 @@ jobs:
               echo "No previous JAR found! Rollback skipped." 
               exit 1 
             fi 
+
+      - name: Install Sqitch on Remote Server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+         host: 156.67.105.82
+         username: root
+         password: 1a2s3d4f5g@1993
+         script: |
+          apt update
+          apt install -y sqitch libdbd-mysql-perl
+
  
             echo "Fetching previous Sqitch migration tag..." 
             PREV_TAG=$(sqitch log --reverse --limit 2 | awk 'NR==4 {print $1}') 
