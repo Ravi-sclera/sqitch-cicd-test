@@ -18,6 +18,17 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
+
+      - name: List Repository Files
+        run: |
+          echo "Repository structure:"
+          find . -type f
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
           
       - name: Copy Sqitch files to server
         uses: appleboy/scp-action@v0.1.7
