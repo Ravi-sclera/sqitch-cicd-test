@@ -57,6 +57,16 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <!-- Include all SQL files and sqitch.plan -->
+                    <include>**/*.sql</include>
+                    <include>sqitch.plan</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
