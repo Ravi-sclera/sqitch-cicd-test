@@ -54,18 +54,22 @@ jobs:
 
             cd /root/deployment/sqitch
 
-            # Extract the latest migration from sqitch.plan (based on the order)
-            LATEST_MIGRATION=$(grep -E '^[a-zA-Z0-9_]+ ' /root/deployment/sqitch/sqitch.plan | tail -n 1 | awk '{print $1}')
+            
+            # Extract the second latest migration from sqitch.plan (based on the order)
+            SECOND_LATEST_MIGRATION=$(grep -E '^[a-zA-Z0-9_]+ ' /root/deployment/sqitch/sqitch.plan | tail -n 2 | head -n 1 | awk '{print $1}')
 
             # Check if a migration was found
-            if [ -z "$LATEST_MIGRATION" ]; then
-            echo "No migration found in sqitch.plan!"
+            if [ -z "$SECOND_LATEST_MIGRATION" ]; then
+            echo "No second latest migration found in sqitch.plan!"
             exit 1
             fi
 
+            echo "Second latest migration: $SECOND_LATEST_MIGRATION"
+
+
             # Revert the latest migration using sqitch
-            echo "Reverting the latest migration: $LATEST_MIGRATION"
-            sqitch revert db:mysql://admin:password%40123@localhost/cicdpipeline --to $LATEST_MIGRATION
+            echo "Reverting the latest migration: $SECOND_LATEST_MIGRATION"
+            sqitch revert db:mysql://admin:password%40123@localhost/cicdpipeline --to $SECOND_LATEST_MIGRATION
 
 
             echo "Reloading systemd and restarting application..."
