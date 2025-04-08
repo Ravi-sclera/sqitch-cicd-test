@@ -47,9 +47,9 @@ jobs:
             jar tf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar | grep -E 'sqitch\.plan|deploy/|revert/'
 
             # Extract Sqitch files to a temporary directory
-            jar xf root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar sqitch.plan deploy/ revert/
-            cp sqitch.plan /root/deployment/sqitch
-            cp -r deploy/ revert/ /root/deployment/sqitch
+            jar xf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar BOOT-INF/classes/revert/ BOOT-INF/classes/deploy/ BOOT-INF/classes/sqitch.plan
+            cp BOOT-INF/classes/sqitch.plan /root/deployment/sqitch
+            cp -r BOOT-INF/classes/revert/ BOOT-INF/classes/deploy/ /root/deployment/sqitch
 
 
             cd /root/deployment/sqitch
