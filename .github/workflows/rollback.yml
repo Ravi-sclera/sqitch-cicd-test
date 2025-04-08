@@ -54,30 +54,19 @@ jobs:
 
             cd /root/deployment/sqitch
 
-            # Create the .sqitch directory with a minimal config to satisfy Sqitch
-            mkdir -p .sqitch
-            cat > .sqitch/sqitch.conf <<EOF
-            [core]
-            engine = mysql
-            plan_file = sqitch.plan
-            EOF
+            # Extract the latest migration from sqitch.plan (based on the order)
+            LATEST_MIGRATION=$(grep -E '^[a-zA-Z0-9_]+ ' /root/deployment/sqitch/sqitch.plan | tail -n 1 | awk '{print $1}')
 
-            # Optionally add engine config (not always needed for log)
-            cat > .sqitch/mysql.conf <<EOF
-            [engine "mysql"]
-            target = db:mysql://admin:password%40123@localhost/cicdpipeline
-            EOF
-
-            # Extract the previous tag from the plan
-            PREV_TAG=$(sqitch log --reverse db:mysql://admin:password%40123@localhost/cicdpipeline | grep '^@' | head -n 2 | tail -n 1 | sed 's/@//')
-
-            if [ -n "$PREV_TAG" ]; then
-              echo "Reverting database to $PREV_TAG..."
-              sqitch revert db:mysql://admin:password%40123@localhost/cicdpipeline --to $PREV_TAG
-              echo "Database rollback successful."
-            else
-              echo "No previous Sqitch migration found! Skipping DB rollback."
+            # Check if a migration was found
+            if [ -z "$LATEST_MIGRATION" ]; then
+            echo "No migration found in sqitch.plan!"
+            exit 1
             fi
+
+            # Revert the latest migration using sqitch
+            echo "Reverting the latest migration: $LATEST_MIGRATION"
+            sqitch revert db:mysql://admin:password%40123@localhost/cicdpipeline --to $LATEST_MIGRATION
+
 
             echo "Reloading systemd and restarting application..."
             systemctl daemon-reexec
