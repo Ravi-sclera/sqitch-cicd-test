@@ -53,7 +53,8 @@ jobs:
 
 
             cd /root/deployment/sqitch
-            PREV_TAG=$(sqitch log --reverse db:mysql://admin:password%40123@localhost/cicdpipeline | grep '^@' | head -n 2 | tail -n 1 | sed 's/@//')
+            cd /root/deployment/sqitch
+            PREV_TAG=$(sqitch log --reverse db:mysql://admin:password%40123@localhost/cicdpipeline --plan-file sqitch.plan | grep '^@' | head -n 2 | tail -n 1 | sed 's/@//')
 
             if [ -n "$PREV_TAG" ]; then
               echo "Reverting database to $PREV_TAG..."
