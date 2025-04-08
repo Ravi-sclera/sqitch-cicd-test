@@ -32,7 +32,7 @@ jobs:
 
             echo "Restoring previous JAR..."
             if [ -f "/root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar" ]; then
-              cp /root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar
+              cp /root/deployment/backups/sqitch-test-0.0.1-SNAPSHOT.jar /root/deployment
               echo "Previous JAR restored successfully."
             else
               echo "No previous JAR found! Rollback skipped."
@@ -44,7 +44,7 @@ jobs:
 
             echo "Fetching previous Sqitch migration tag..."
             echo "Listing JAR contents..."
-            jar tf target/sqitch-test-0.0.1-SNAPSHOT.jar | grep -E 'sqitch\.plan|deploy/|revert/'
+            jar tf root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar | grep -E 'sqitch\.plan|deploy/|revert/'
 
             # Extract Sqitch files to a temporary directory
             jar xf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar sqitch.plan deploy/ revert/
