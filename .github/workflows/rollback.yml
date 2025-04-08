@@ -54,16 +54,22 @@ jobs:
 
             cd /root/deployment/sqitch
 
-            # Initialize temp Sqitch project
-            sqitch init temp-project --engine mysql
+            # Create the .sqitch directory with a minimal config to satisfy Sqitch
+            mkdir -p .sqitch
+            cat > .sqitch/sqitch.conf <<EOF
+            [core]
+            engine = mysql
+            plan_file = sqitch.plan
+            EOF
 
-            # Overwrite auto-generated plan with the real one
-            cp sqitch.plan sqitch.plan.bak  # just in case
-            # No need to copy again if already present
+            # Optionally add engine config (not always needed for log)
+            cat > .sqitch/mysql.conf <<EOF
+            [engine "mysql"]
+            target = db:mysql://admin:password%40123@localhost/cicdpipeline
+            EOF
 
-            # Run log on initialized project
+            # Extract the previous tag from the plan
             PREV_TAG=$(sqitch log --reverse db:mysql://admin:password%40123@localhost/cicdpipeline | grep '^@' | head -n 2 | tail -n 1 | sed 's/@//')
-
 
             if [ -n "$PREV_TAG" ]; then
               echo "Reverting database to $PREV_TAG..."
