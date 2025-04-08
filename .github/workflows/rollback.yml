@@ -47,11 +47,12 @@ jobs:
             jar tf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar | grep -E 'sqitch\.plan|deploy/|revert/'
 
             # Extract Sqitch files to a temporary directory
-            jar xf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar ./sqitch.plan ./deploy/ ./revert/
+            jar xf /root/deployment/sqitch-test-0.0.1-SNAPSHOT.jar BOOT-INF/classes/sqitch.plan BOOT-INF/classes/deploy BOOT-INF/classes/revert
 
             # Move files to a working directory
-            cp ./sqitch.plan /root/deployment/sqitch
-            cp -r ./deploy/ ./revert/ /root/deployment/sqitch
+            cp BOOT-INF/classes/sqitch.plan /root/deployment/sqitch
+            cp -r BOOT-INF/classes/deploy BOOT-INF/classes/revert /root/deployment/sqitch
+
             cd /root/deployment/sqitch
             PREV_TAG=$(sqitch log --reverse -n 2 db:mysql://admin:password%40123@localhost/cicdpipeline | awk 'NR==4 {print $1}')
 
